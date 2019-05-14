@@ -102,11 +102,6 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
                 //액션바의 탭위치를 페이지 위치에 맞춘다.
                 //   actionBar.setSelectedNavigationItem(position);
 
-                btn1 = (ImageView)findViewById(R.id.btn1);
-                btn2 = (ImageView)findViewById(R.id.btn2);
-                btn3= (ImageView)findViewById(R.id.btn3);
-                btn4 = (ImageView)findViewById(R.id.btn4);
-                btn5= (ImageView)findViewById(R.id.btn5);
 
                 btn1.setImageResource(R.drawable.ic_list_off);
                 btn2.setImageResource(R.drawable.ic_img_off);
@@ -175,10 +170,10 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
 
 
-        btn1 = (ImageView)findViewById(R.id.btn2);
+        btn1 = (ImageView)findViewById(R.id.btn1);
         btn2 = (ImageView)findViewById(R.id.btn2);
         btn3= (ImageView)findViewById(R.id.btn3);
-        btn4 = (ImageView)findViewById(R.id.btn2);
+        btn4 = (ImageView)findViewById(R.id.btn4);
         btn5= (ImageView)findViewById(R.id.btn5);
 
         btn1.setOnClickListener(movePageListener);
@@ -314,9 +309,9 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
                 case 2:
                     return new ChatlistFragment();
                 case 3:
-                    return new ChatlistFragment();
+                    return new MemberlistFragment();
                 case 4:
-                    return new ChatlistFragment();
+                    return new SettingFragment();
                 default:
                     return null;
             }
