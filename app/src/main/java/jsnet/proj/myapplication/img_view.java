@@ -25,6 +25,7 @@ public class img_view extends Activity {
 	private static final int REQUEST_IMAGE_CROP = 3;
 	private ImageView mImageView;
 	private String mCurrentPhotoPath;
+	private String mCurrentPhotoPath2;
 	private Uri contentUri;
 	PhotoViewAttacher mAttacher;
 	ImageLoader imageLoader;
