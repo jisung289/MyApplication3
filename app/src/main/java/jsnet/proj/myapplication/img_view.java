@@ -26,6 +26,7 @@ public class img_view extends Activity {
 	private ImageView mImageView;
 	private String mCurrentPhotoPath;
 	private String mCurrentPhotoPath2;
+	private String mCurrentPhotoPath3;
 	private Uri contentUri;
 	PhotoViewAttacher mAttacher;
 	ImageLoader imageLoader;
