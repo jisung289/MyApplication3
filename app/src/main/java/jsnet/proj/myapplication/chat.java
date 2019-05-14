@@ -65,7 +65,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 
 /**
- * Created by Administrator on 2017-09-24.
+ * Created by Administrator on 2017-09-24.a
  */
 
 public class chat extends AppCompatActivity {
