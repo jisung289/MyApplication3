@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="#485cd4">
+
+
+    <TextView
+        android:id="@+id/chat_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="TextView"
+        android:textColor="#ffffff"
+        android:textSize="18sp" />
+
+    <ImageButton
+        android:id="@+id/view_profile_list_inchat"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+
+        android:layout_marginRight="10dp"
+        android:background="@drawable/ic_supervisor_account_black_24dp"/>
+
+    <ImageButton
+        android:id="@+id/my_news_list"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/ic_arrow_back_black_24dp" />
+
+</RelativeLayout>
