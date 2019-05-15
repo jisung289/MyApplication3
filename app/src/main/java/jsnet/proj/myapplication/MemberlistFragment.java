@@ -17,9 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,6 +87,8 @@ public class MemberlistFragment extends Fragment
     private String json_user_uk3;
 
 
+    private TextView txt_area;
+    private TextView txt_sex;
 
     private TextView user_name1;
     private ImageView user_img1;
@@ -92,6 +97,20 @@ public class MemberlistFragment extends Fragment
     private TextView user_name3;
     private ImageView user_img3;
 
+
+    private Boolean spinner_flag;
+    private Boolean spinner_flag2;
+
+    ArrayAdapter<CharSequence> adspin;
+    ArrayAdapter<CharSequence> adspin_sex;
+
+
+
+    private Spinner spinner;
+    private Spinner spinner2;
+
+    private String area;
+    private String sex;
 
     final int ITEM_SIZE = 6;
     ProgressDialog mProgressDialog;
@@ -132,7 +151,8 @@ public class MemberlistFragment extends Fragment
         RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_member_area, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.recyclerview);
 
-
+        spinner_flag=false;
+        spinner_flag2=false;
         SharedPreferences preferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         userkey=preferences.getString("temp_key", "");
 
@@ -147,16 +167,70 @@ public class MemberlistFragment extends Fragment
         coverimg = (ImageView) layout.findViewById(R.id.imageView6);
 
 
-        user_name1=(TextView) layout.findViewById(R.id.pro_name_rank1);
-        user_name2=(TextView) layout.findViewById(R.id.pro_name_rank2);
-        user_name3=(TextView) layout.findViewById(R.id.pro_name_rank3);
+
+        txt_area = (TextView) layout.findViewById(R.id.textview_area);
+        txt_sex = (TextView) layout.findViewById(R.id.textview_sex);
 
 
 
-        user_img1=(ImageView) layout.findViewById(R.id.pro_img_rank1);
-        user_img2=(ImageView) layout.findViewById(R.id.pro_img_rank2);
-        user_img3=(ImageView) layout.findViewById(R.id.pro_img_rank3);
+        spinner = (Spinner) layout.findViewById(R.id.sp_area);
+        spinner.setPrompt("시/도 를 선택하세요.");
 
+        adspin = ArrayAdapter.createFromResource(getActivity(), R.array.area2,    android.R.layout.simple_spinner_item);
+
+        adspin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adspin);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?>  parent, View view, int position, long id) {
+                if(spinner_flag==true) {
+                   area = adspin.getItem(position).toString();
+                    txt_area.setText(area);
+                    spinner_flag = false;
+                }
+            }
+            public void onNothingSelected(AdapterView<?>  parent) {
+            }
+        });
+
+        spinner2 = (Spinner) layout.findViewById(R.id.sp_sex);
+        spinner2.setPrompt("시/도 를 선택하세요.");
+
+        adspin_sex = ArrayAdapter.createFromResource(getActivity(), R.array.sex,    android.R.layout.simple_spinner_item);
+
+        adspin_sex.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner2.setAdapter(adspin_sex);
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?>  parent, View view, int position, long id) {
+                if(spinner_flag2==true) {
+                    sex = adspin_sex.getItem(position).toString();
+                    txt_sex.setText(sex);
+                    spinner_flag2 = false;
+                }
+            }
+            public void onNothingSelected(AdapterView<?>  parent) {
+            }
+        });
+
+
+        txt_area.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+
+                        spinner_flag=true;
+                        spinner.performClick();
+                    }
+                }
+        );
+
+        txt_sex.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+
+                        spinner_flag2=true;
+                        spinner2.performClick();
+                    }
+                }
+        );
 
 
         swipeContainer.setRefreshing(true);
@@ -194,154 +268,6 @@ public class MemberlistFragment extends Fragment
                 android.R.color.holo_red_light);
 
 
-
-
-
-        queue = Volley.newRequestQueue(getActivity());
-        String url = "http://file.paranweb.co.kr/gay/get_member.php?uk="+userkey;
-
-
-        Log.d("json_url_pro", url);
-
-        final StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d("json_url_pro", "res");
-                try {
-
-
-
-
-
-                    //Creating JsonObject from response String
-                    jsonobject= new JSONObject(response.toString());
-                    json_user_name1=jsonobject.getString("json_user_name1");
-                    json_user_img1=jsonobject.getString("json_user_img1");
-                    json_user_name2=jsonobject.getString("json_user_name2");
-                    json_user_img2=jsonobject.getString("json_user_img2");
-                    json_user_name3=jsonobject.getString("json_user_name3");
-                    json_user_img3=jsonobject.getString("json_user_img3");
-
-
-                    json_user_uk1=jsonobject.getString("json_user_uk1");
-                    json_user_uk2=jsonobject.getString("json_user_uk2");
-                    json_user_uk3=jsonobject.getString("json_user_uk3");
-
-
-
-                    user_name1.setText(json_user_name1);
-                    user_name2.setText(json_user_name2);
-                    user_name3.setText(json_user_name3);
-
-                    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getActivity().getBaseContext())
-                            .threadPriority(Thread.NORM_PRIORITY - 2)
-                            .denyCacheImageMultipleSizesInMemory()
-                            .discCacheFileNameGenerator(new Md5FileNameGenerator())
-                            .tasksProcessingOrder(QueueProcessingType.LIFO)
-                            .writeDebugLogs() // Remove for release app
-                            .build();
-                    ImageLoader.getInstance().init(config);
-
-
-
-
-                    DisplayImageOptions options = new DisplayImageOptions.Builder()
-                            .showImageOnLoading(R.drawable.temp_img)
-                            .showImageForEmptyUri(R.drawable.temp_img)
-                            .showImageOnFail(R.drawable.temp_img)
-                            .cacheInMemory(true)
-                            .cacheOnDisk(true)
-                            .considerExifParams(true)
-                            .build();
-
-
-
-                    ImageLoader.getInstance().displayImage("http://file.paranweb.co.kr/gay/profile_img_small/"+json_user_img1, user_img1,options);
-                    //     profile_img.setBackground(new ShapeDrawable(new OvalShape()));
-                    user_img1.setClipToOutline(true);
-
-
-                    ImageLoader.getInstance().displayImage("http://file.paranweb.co.kr/gay/profile_img_small/"+json_user_img2, user_img2,options);
-                    //     profile_img.setBackground(new ShapeDrawable(new OvalShape()));
-                    user_img2.setClipToOutline(true);
-
-
-                    ImageLoader.getInstance().displayImage("http://file.paranweb.co.kr/gay/profile_img_small/"+json_user_img3, user_img3,options);
-                    //     profile_img.setBackground(new ShapeDrawable(new OvalShape()));
-                    user_img3.setClipToOutline(true);
-
-
-
-
-
-                } catch (JSONException e) {
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) ;
-
-        stringRequest.setTag("MAIN");
-        queue.add(stringRequest);
-
-
-        user_img1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자
-                        Profile.class); // 다음넘어갈 화면
-                intent.putExtra("user_token", json_user_uk1);
-                getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-            }
-        });
-
-        user_img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자
-                        Profile.class); // 다음넘어갈 화면
-                intent.putExtra("user_token", json_user_uk2);
-                getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-            }
-        });
-
-        user_img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자
-                        Profile.class); // 다음넘어갈 화면
-                intent.putExtra("user_token", json_user_uk3);
-                getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-            }
-        });
-
-
-
-        user_img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자
-                        Profile.class); // 다음넘어갈 화면
-                intent.putExtra("user_token", json_user_uk3);
-                getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-            }
-        });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setHasFixedSize(true);

@@ -21,6 +21,19 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+
+            <Spinner
+                android:id="@+id/sp_area"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:id="@+id/sp_sex"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,7 +52,7 @@
                     app:srcCompat="@drawable/ic_iconmonstr_crown" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/textview_area"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -48,17 +61,15 @@
                     android:paddingRight="10dp"
                     android:text="지역선택" />
 
-                <Spinner
-                    android:id="@+id/sp_area"
-                    android:layout_width="100dp"
+                <TextView
+                    android:id="@+id/textview_sex"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Spinner
-                    android:id="@+id/sp_sex"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="성별선택" />
 
                 <Button
                     android:id="@+id/button5"
@@ -68,6 +79,11 @@
                     android:text="검색" />
             </LinearLayout>
 
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                app:srcCompat="@android:color/holo_blue_light" />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"

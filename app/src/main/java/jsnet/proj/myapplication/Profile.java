@@ -166,12 +166,12 @@ public class Profile extends AppCompatActivity {
 
     private Boolean spinner_flag;
 
+    private Spinner spinner;
+    private String userkey;
 
     private Handler mHandler = new Handler();
 
 
-    private Spinner spinner;
-    private String userkey;
     String user_data = "" ;
     String ImageTag = "image_tag" ;
     String b_sno = "" ;

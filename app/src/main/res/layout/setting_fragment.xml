@@ -172,7 +172,7 @@
                 android:text="TextView" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/textview_sex"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="포인트 이력" />
