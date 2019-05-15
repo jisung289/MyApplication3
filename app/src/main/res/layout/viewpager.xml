@@ -45,7 +45,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:padding="10dp"
-                    ads:srcCompat="@drawable/ic_list_on" />
+                    ads:srcCompat="@drawable/ic_crown_on" />
             </LinearLayout>
 
             <LinearLayout

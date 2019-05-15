@@ -103,8 +103,8 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
                 //   actionBar.setSelectedNavigationItem(position);
 
 
-                btn1.setImageResource(R.drawable.ic_list_off);
-                btn2.setImageResource(R.drawable.ic_img_off);
+                btn1.setImageResource(R.drawable.ic_crown_off);
+                btn2.setImageResource(R.drawable.ic_list_off);
                 btn3.setImageResource(R.drawable.ic_member_off);
                 btn4.setImageResource(R.drawable.ic_msg_off);
                 btn5.setImageResource(R.drawable.ic_dot_off);
@@ -112,11 +112,11 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
                 if(position==0){
 
-                    btn1.setImageResource(R.drawable.ic_list_on);
+                    btn1.setImageResource(R.drawable.ic_crown_on);
                 }
 
                 if(position==1){
-                    btn2.setImageResource(R.drawable.ic_img_on);
+                    btn2.setImageResource(R.drawable.ic_list_on);
                 }
 
 
@@ -303,13 +303,13 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
             switch(position)
             {
                 case 0:
-                    return new SinglelineFragment();
+                    return new MemberrankFragment();
                 case 1:
-                    return new MainFragment();
+                    return new MemberlistFragment();
                 case 2:
                     return new ChatlistFragment();
                 case 3:
-                    return new MemberlistFragment();
+                    return new SinglelineFragment();
                 case 4:
                     return new SettingFragment();
                 default:
