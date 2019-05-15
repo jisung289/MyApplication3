@@ -129,7 +129,7 @@ public class MemberlistFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         flag_frist=1;
-        RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_member, container, false);
+        RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_member_area, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.recyclerview);
 
 
