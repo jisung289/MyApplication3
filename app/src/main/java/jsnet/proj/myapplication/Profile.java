@@ -383,6 +383,54 @@ public class Profile extends AppCompatActivity {
             }
         });
 
+        btn_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences preferences = getSharedPreferences("pref", MODE_PRIVATE);
+                String userkey=preferences.getString("temp_key", "");
+
+                queue = Volley.newRequestQueue(getBaseContext());
+                String url = "http://file.paranweb.co.kr/gay/like_profile.php?uk="+userkey+"&ta="+user_token;
+
+
+                Log.d("json_url_pro", url);
+
+                final StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("json_url_pro", "res");
+
+
+                        try {
+                            //Creating JsonObject from response String
+                            jsonobject= new JSONObject(response.toString());
+                            jsno_btn_list = jsonobject.getString("list_cnt");
+                            if(jsno_btn_list.equals("0")){
+                                Toast.makeText(getBaseContext(), "오늘은 이미 좋아요를 하셨습니다.", Toast.LENGTH_SHORT).show();
+                            }else {
+                                Toast.makeText(getBaseContext(), "좋아요!", Toast.LENGTH_SHORT).show();
+                                profile_btn_like.setText(jsno_btn_list);
+                            }
+
+                        } catch (JSONException e) {
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) ;
+
+
+                stringRequest.setTag(TAG);
+                queue.add(stringRequest);
+
+            }
+        });
+
 
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
