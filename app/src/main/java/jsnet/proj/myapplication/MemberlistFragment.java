@@ -122,7 +122,18 @@ public class MemberlistFragment extends Fragment
     private ImageView coverimg;
     private Button setkeybtn;
     private String userkey;
+
+
+
+    private String ser_area="";
+    private String ser_sex="";
+
+
+
     private Handler mHandler = new Handler();
+
+    private Button search;
+
 
     private RecyclerView recyclerView;
 
@@ -150,7 +161,7 @@ public class MemberlistFragment extends Fragment
         flag_frist=1;
         RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_member_area, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.recyclerview);
-
+        search=(Button) layout.findViewById(R.id.search);
         spinner_flag=false;
         spinner_flag2=false;
         SharedPreferences preferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
@@ -192,6 +203,7 @@ public class MemberlistFragment extends Fragment
             }
         });
 
+
         spinner2 = (Spinner) layout.findViewById(R.id.sp_sex);
         spinner2.setPrompt("시/도 를 선택하세요.");
 
@@ -231,6 +243,37 @@ public class MemberlistFragment extends Fragment
                     }
                 }
         );
+
+
+
+        search.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                    ser_area= txt_area.getText().toString();
+                    ser_sex= txt_sex.getText().toString();
+
+                    swipeContainer.setRefreshing(true);
+                    // Setup refresh listener which triggers new data loading
+                    items.clear();
+                    //  recyclerView.removeAllViews();
+                    page_int=1;
+                    re_view=0;
+
+                    new DownloadJSON().execute();
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+
+                            swipeContainer.setRefreshing(false);
+                        }
+                    }, 1000);
+
+
+                    }
+                }
+        );
+
+
 
 
         swipeContainer.setRefreshing(true);
@@ -401,10 +444,10 @@ public class MemberlistFragment extends Fragment
             // Retrieve JSON Objects from the given URL address
 
             jsonobject = JSONfunctions
-                    .getJSONfromURL("http://file.paranweb.co.kr/gay/board_app.php?uk="+userkey+"&p="+ String.valueOf(page_int));
+                    .getJSONfromURL("http://file.paranweb.co.kr/gay/get_member_list.php?uk="+userkey+"&p="+ String.valueOf(page_int)+"&area="+ser_area+"&sex="+ser_sex);
 
 
-            Log.d("json_url", "http://file.paranweb.co.kr/gay/board_app.php?uk="+userkey+"&p="+ String.valueOf(page_int));
+            Log.d("json_url", "http://file.paranweb.co.kr/gay/get_member_list.php?uk="+userkey+"&p="+ String.valueOf(page_int)+"&area="+ser_area+"&sex="+ser_sex);
             if(jsonobject==null) {
                 return null;
             }

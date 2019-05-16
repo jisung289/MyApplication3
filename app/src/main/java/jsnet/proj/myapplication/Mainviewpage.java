@@ -2,23 +2,48 @@ package jsnet.proj.myapplication;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -44,7 +69,8 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
     private Fragment targetFragment;
     final static String FRAGMENT_TAG = "FRAGMENTB_TAG";
 
-
+    private ImageView badge_new_chat;
+    private TextView title_bar;
     private ImageView btn1;
     private ImageView btn2;
     private ImageView btn3;
@@ -97,6 +123,8 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
 
 
+        token = FirebaseInstanceId.getInstance().getToken();
+        getto();
 
 
         if (ContextCompat.checkSelfPermission(this,
@@ -123,11 +151,31 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
 
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel notificationChannel = new NotificationChannel("news", "news", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationChannel.setDescription("채팅 및 이벤트 알림");
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.GREEN);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 100, 200});
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            notificationManager.createNotificationChannel(notificationChannel);
+
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.viewpager);
 
 
 
+        btn1 = (ImageView)findViewById(R.id.btn1);
+        btn2 = (ImageView)findViewById(R.id.btn2);
+        btn3= (ImageView)findViewById(R.id.btn3);
+        btn4 = (ImageView)findViewById(R.id.btn4);
+        btn5= (ImageView)findViewById(R.id.btn5);
+        badge_new_chat= (ImageView)findViewById(R.id.badge_new);
 
 
         ActionBar actionBar = getSupportActionBar();
@@ -139,9 +187,22 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
         actionBar.setDisplayShowHomeEnabled(false);            //홈 아이콘을 숨김처리합니다.
 
 
+
+        //layout을 가지고 와서 actionbar에 포팅을 시킵니다.
+        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        View actionbar = inflater.inflate(R.layout.action_bar, null);
+
+
+        actionBar.setCustomView(actionbar);
+        Toolbar parent = (Toolbar)actionbar.getParent();
+        parent.setContentInsetsAbsolute(0,0);
+
+
+
         vp = (ViewPager)findViewById(R.id.vp);
         pagerAdapter=new pagerAdapter(getSupportFragmentManager());
 
+        title_bar = (TextView) findViewById(R.id.title_tv);
         vp.setOffscreenPageLimit(3);
         //저장되는 최대한의 프래그먼트
 
@@ -156,8 +217,8 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
 
                 btn1.setImageResource(R.drawable.ic_crown_off);
-                btn2.setImageResource(R.drawable.ic_list_off);
-                btn3.setImageResource(R.drawable.ic_member_off);
+                btn2.setImageResource(R.drawable.ic_member_off);
+                btn3.setImageResource(R.drawable.ic_list_off);
                 btn4.setImageResource(R.drawable.ic_msg_off);
                 btn5.setImageResource(R.drawable.ic_dot_off);
 
@@ -165,25 +226,41 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
                 if(position==0){
 
                     btn1.setImageResource(R.drawable.ic_crown_on);
+                    title_bar.setText("인기멤버");
                 }
 
                 if(position==1){
-                    btn2.setImageResource(R.drawable.ic_list_on);
+                    btn2.setImageResource(R.drawable.ic_member_on);
+                    title_bar.setText("전체멤버");
                 }
 
 
                 if(position==2){
-                    btn3.setImageResource(R.drawable.ic_member_on);
+                    btn3.setImageResource(R.drawable.ic_list_on);
+                    title_bar.setText("사진 이야기");
                 }
 
 
                 if(position==3){
                     btn4.setImageResource(R.drawable.ic_msg_on);
+                    title_bar.setText("대화함");
+
+                    badge_new_chat.setVisibility(View.GONE);
+
+
+                    SharedPreferences preferences_in = getSharedPreferences("pref", MODE_PRIVATE);
+                    SharedPreferences.Editor editor_new_in = preferences_in.edit();
+                    editor_new_in.putString("new_url", "");
+                    editor_new_in.putString("new_grade", "");
+                    editor_new_in.commit();
+
+
                 }
 
 
                 if(position==4){
                     btn5.setImageResource(R.drawable.ic_dot_on);
+                    title_bar.setText("더보기");
                 }
 
 
@@ -222,11 +299,6 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
 
 
-        btn1 = (ImageView)findViewById(R.id.btn1);
-        btn2 = (ImageView)findViewById(R.id.btn2);
-        btn3= (ImageView)findViewById(R.id.btn3);
-        btn4 = (ImageView)findViewById(R.id.btn4);
-        btn5= (ImageView)findViewById(R.id.btn5);
 
         btn1.setOnClickListener(movePageListener);
         btn1.setTag(0);
@@ -300,8 +372,15 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
 
 
+        Intent intent = getIntent(); // 푸쉬 실행시
 
+        String s = intent.getStringExtra("url");
+        String a = intent.getStringExtra("grade");
+        if(s!=null) {
+            get_new_intent(s,a);
+        }
 
+        updateIconBadgeCount(this,0);
 
     }
 
@@ -359,9 +438,9 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
                 case 1:
                     return new MemberlistFragment();
                 case 2:
-                    return new ChatlistFragment();
-                case 3:
                     return new MainFragment();
+                case 3:
+                    return new ChatlistFragment();
                 case 4:
                     return new SettingFragment();
                 default:
@@ -410,5 +489,179 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
         }
     }
 
+
+    @Override
+    protected void  onResume() {
+        super.onResume();
+
+
+        SharedPreferences preferences = getSharedPreferences("pref", MODE_PRIVATE);
+        String new_url=preferences.getString("new_url", "");
+        String new_grade=preferences.getString("new_grade", "");
+
+        set_new_badge(new_grade);
+        updateIconBadgeCount(this,0);
+        LocalBroadcastManager.getInstance(this).registerReceiver( mMessageReceiver, new IntentFilter("new_event"));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver( mMessageReceiver);
+
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+
+        @Override
+
+        public void onReceive(Context context, Intent intent) {
+
+
+            String url = intent.getStringExtra("url");
+            String grade = intent.getStringExtra("grade");
+
+            set_new_badge(grade);
+        }
+    };
+
+    private void initialize() {
+        android.os.Handler handler = new android.os.Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                getto();
+            }
+        };
+
+        handler.sendEmptyMessageDelayed(0, 3000);
+        //handler.sendEmptyMessageDelayed(0, 3);
+    }
+
+    private void getto() {
+        String token = FirebaseInstanceId.getInstance().getToken();
+        if(token=="" || token==null){
+            initialize();
+            //   Toast.makeText(this, "어플리케이션등록에 실패하였습니다.  잠시후 다시 시도합니다.", Toast.LENGTH_SHORT).show();
+        }else{
+            FirebaseMessaging.getInstance().subscribeToTopic("mannam");
+            FirebaseMessaging.getInstance().subscribeToTopic("mannam_test");
+            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("token", token);
+            editor.commit();
+            login();
+        }
+    }
+
+
+
+    public void updateIconBadgeCount(Context context, int count) {
+        SharedPreferences bpref = getSharedPreferences("bpref", MODE_PRIVATE);
+        String b_count = bpref.getString("b_count", "");
+        SharedPreferences.Editor editor = bpref.edit();
+        editor.putString("b_count", "0");
+        editor.commit();
+
+
+        Log.d("test", "updateIconBadgeCount_main");
+        Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
+
+        // Component를 정의
+        intent.putExtra("badge_count_package_name", context.getPackageName());
+        intent.putExtra("badge_count_class_name", Mainviewpage.class.getName());
+
+        // 카운트를 넣어준다.
+        intent.putExtra("badge_count", 0);
+
+        // Version이 3.1이상일 경우에는 Flags를 설정하여 준다.
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            intent.setFlags(0x00000020);
+        }
+
+        // send
+        sendBroadcast(intent);
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        super.onNewIntent(intent);
+        String url = intent.getStringExtra("url");
+        String grade = intent.getStringExtra("grade");
+        if(url!=null) {
+
+            Log.d("json_url_pro", url);
+            Log.d("json_url_pro", grade);
+            Log.d("json_url_pro", "onnewintent");
+            get_new_intent(url,grade);
+
+        }
+        return;
+
+    }
+
+    private void get_new_intent(String url,String grade){
+        Log.d("json_url_pro", "onnewintent_fun");
+        if(grade.equals("chat")){
+            vp.setAdapter(pagerAdapter);
+            vp.setCurrentItem(3);
+        }
+    }
+
+
+    private void set_new_badge(String grade){
+        if(grade.equals("chat")){
+            badge_new_chat.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void login(){
+        token = FirebaseInstanceId.getInstance().getToken();
+        SharedPreferences preferences = getSharedPreferences("pref", MODE_PRIVATE);
+        String userkey=preferences.getString("temp_key", "");
+        RequestQueue queue;
+        queue = Volley.newRequestQueue(getBaseContext());
+        String url = "http://file.paranweb.co.kr/gay/login_chk.php?uk="+userkey+"&fcm_token="+token;
+
+
+
+        JSONArray jsonarray;
+
+        Log.d("json_url_pro", url);
+
+        final StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("json_url_pro", "res");
+
+
+                try {
+                    //Creating JsonObject from response String
+                    JSONObject  jsonobject= new JSONObject(response.toString());
+                    String su = jsonobject.getString("success");
+                    if(su.equals("0")){
+                        SharedPreferences pref =getBaseContext().getSharedPreferences("pref", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString("temp_key", "");
+                        editor.commit();
+                        finish();
+                    }
+
+                } catch (JSONException e) {
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) ;
+
+
+        stringRequest.setTag("Login");
+        queue.add(stringRequest);
+
+    }
 
 }

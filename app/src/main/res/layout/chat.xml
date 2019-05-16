@@ -104,39 +104,47 @@
 
     <LinearLayout
         android:id="@+id/d_layer"
-        android:orientation="vertical"
         android:layout_width="280dp"
         android:layout_height="match_parent"
-        android:weightSum="100"
         android:layout_gravity="end"
         android:background="#e49e9e"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#ffffff"
             android:orientation="horizontal"
-            android:background="#ffffff">
+            android:padding="10dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="참여자리스트" />
+                android:text="대화방 알림 설정"
+                android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/ic_https_black_24dp" />
+                android:id="@+id/imageView19"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                app:srcCompat="@drawable/ic_heart_2_line" />
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:text="실시간 접속자"
+            android:textSize="18sp" />
+
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:id="@+id/pro_list_sc"
