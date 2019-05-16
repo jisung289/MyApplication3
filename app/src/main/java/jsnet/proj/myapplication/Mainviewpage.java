@@ -1,13 +1,17 @@
 package jsnet.proj.myapplication;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +51,10 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
     private ImageView btn4;
     private ImageView btn5;
     private Context context;
+    final static int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 100;
+    final static int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 200;
+
+    private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
     @Override
 
 
@@ -65,10 +73,54 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
 
             context.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
+
+            Intent intent2 = new Intent(
+                    context, // 현재화면의 제어권자
+                    LoadingActivity.class); // 다음넘어갈 화면
+
+
+            context.startActivity(intent2.addFlags(FLAG_ACTIVITY_NEW_TASK));
             finish();
         }else{
             Toast.makeText(context, temp_key, Toast.LENGTH_SHORT).show();
+
+
+            Intent intent = new Intent(
+                    context, // 현재화면의 제어권자
+                    LoadingActivity.class); // 다음넘어갈 화면
+
+
+            context.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
+
+
         }
+
+
+
+
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            //When permission is not granted by user, show them message why this permission is needed.
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(this, "Please grant permissions to record audio", Toast.LENGTH_LONG).show();
+
+                //Give user option to still opt-in the permissions
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_RECORD_AUDIO);
+
+            } else {
+                // Show user dialog to grant permission to record audio
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_RECORD_AUDIO);
+            }
+        }
+
 
 
         super.onCreate(savedInstanceState);
@@ -309,7 +361,7 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
                 case 2:
                     return new ChatlistFragment();
                 case 3:
-                    return new SinglelineFragment();
+                    return new MainFragment();
                 case 4:
                     return new SettingFragment();
                 default:

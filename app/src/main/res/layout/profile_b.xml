@@ -239,23 +239,32 @@
                     android:text="1:1 대화"
                     android:textAlignment="viewEnd"
                     android:textColor="#FFFFFFFF" />
-
             </LinearLayout>
 
         </LinearLayout>
 
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vp"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_weight="1">
+            android:layout_height="match_parent">
 
-        </android.support.v4.view.ViewPager>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_material_light">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/intro2"
+            android:visibility="visible" />
 
     </LinearLayout>
-
 </android.support.constraint.ConstraintLayout>

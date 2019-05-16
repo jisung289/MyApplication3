@@ -20,22 +20,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +40,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * Created by Administrator on 2017-06-14.
  */
 
-public class MemberrankFragment extends Fragment
+public class Profile_list_like extends Fragment
 {
     private Intent intent;
 
@@ -66,33 +54,6 @@ public class MemberrankFragment extends Fragment
     FloatingActionButton menu1,menu2,menu3 ;
     List<Item> items = new ArrayList<>();
 
-
-
-    private RequestQueue queue;
-    private ImageView profile_img;
-
-    private String json_user_name1;
-    private String json_user_img1;
-    private String json_user_name2;
-    private String json_user_img2;
-    private String json_user_name3;
-    private String json_user_img3;
-
-
-    private String json_user_uk1;
-    private String json_user_uk2;
-    private String json_user_uk3;
-
-
-
-    private TextView user_name1;
-    private ImageView user_img1;
-    private TextView user_name2;
-    private ImageView user_img2;
-    private TextView user_name3;
-    private ImageView user_img3;
-
-
     final int ITEM_SIZE = 6;
     ProgressDialog mProgressDialog;
     JSONObject jsonobject;
@@ -101,20 +62,19 @@ public class MemberrankFragment extends Fragment
     private ViewGroup container;
     private SwipeRefreshLayout swipeContainer;
     private ImageView coverimg;
-    private Button setkeybtn;
     private String userkey;
     private Handler mHandler = new Handler();
 
     private RecyclerView recyclerView;
-
+    private String user_token;
 
     public static RecyclerView.LayoutManager mLayoutManager;
 
 
 
-    RecyclerAdapter_single RecyclerAdapter = null;
+    RecyclerAdapter_profile_like RecyclerAdapter = null;
 
-    public MemberrankFragment()
+    public Profile_list_like()
     {
     }
 
@@ -129,9 +89,10 @@ public class MemberrankFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         flag_frist=1;
-        RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_member, container, false);
+        RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_profile, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.recyclerview);
 
+        user_token=((Profile)getActivity()).user_token;
 
         SharedPreferences preferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         userkey=preferences.getString("temp_key", "");
@@ -147,19 +108,6 @@ public class MemberrankFragment extends Fragment
         coverimg = (ImageView) layout.findViewById(R.id.imageView6);
 
 
-        user_name1=(TextView) layout.findViewById(R.id.pro_name_rank1);
-        user_name2=(TextView) layout.findViewById(R.id.pro_name_rank2);
-        user_name3=(TextView) layout.findViewById(R.id.pro_name_rank3);
-
-
-
-        user_img1=(ImageView) layout.findViewById(R.id.pro_img_rank1);
-        user_img2=(ImageView) layout.findViewById(R.id.pro_img_rank2);
-        user_img3=(ImageView) layout.findViewById(R.id.pro_img_rank3);
-
-
-
-        swipeContainer.setRefreshing(true);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -187,6 +135,7 @@ public class MemberrankFragment extends Fragment
         });
 
 
+
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -197,151 +146,8 @@ public class MemberrankFragment extends Fragment
 
 
 
-        queue = Volley.newRequestQueue(getActivity());
-        String url = "http://file.paranweb.co.kr/gay/get_member.php?uk="+userkey;
 
 
-        Log.d("json_url_pro", url);
-
-        final StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d("json_url_pro", "res");
-                try {
-
-
-
-
-
-                    //Creating JsonObject from response String
-                    jsonobject= new JSONObject(response.toString());
-                    json_user_name1=jsonobject.getString("json_user_name1");
-                    json_user_img1=jsonobject.getString("json_user_img1");
-                    json_user_name2=jsonobject.getString("json_user_name2");
-                    json_user_img2=jsonobject.getString("json_user_img2");
-                    json_user_name3=jsonobject.getString("json_user_name3");
-                    json_user_img3=jsonobject.getString("json_user_img3");
-
-
-                    json_user_uk1=jsonobject.getString("json_user_uk1");
-                    json_user_uk2=jsonobject.getString("json_user_uk2");
-                    json_user_uk3=jsonobject.getString("json_user_uk3");
-
-
-
-                    user_name1.setText(json_user_name1);
-                    user_name2.setText(json_user_name2);
-                    user_name3.setText(json_user_name3);
-
-                    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getActivity().getBaseContext())
-                            .threadPriority(Thread.NORM_PRIORITY - 2)
-                            .denyCacheImageMultipleSizesInMemory()
-                            .discCacheFileNameGenerator(new Md5FileNameGenerator())
-                            .tasksProcessingOrder(QueueProcessingType.LIFO)
-                            .writeDebugLogs() // Remove for release app
-                            .build();
-                    ImageLoader.getInstance().init(config);
-
-
-
-
-                    DisplayImageOptions options = new DisplayImageOptions.Builder()
-                            .showImageOnLoading(R.drawable.temp_img)
-                            .showImageForEmptyUri(R.drawable.temp_img)
-                            .showImageOnFail(R.drawable.temp_img)
-                            .cacheInMemory(true)
-                            .cacheOnDisk(true)
-                            .considerExifParams(true)
-                            .build();
-
-
-
-                    ImageLoader.getInstance().displayImage("http://file.paranweb.co.kr/gay/profile_img_small/"+json_user_img1, user_img1,options);
-                    //     profile_img.setBackground(new ShapeDrawable(new OvalShape()));
-                    user_img1.setClipToOutline(true);
-
-
-                    ImageLoader.getInstance().displayImage("http://file.paranweb.co.kr/gay/profile_img_small/"+json_user_img2, user_img2,options);
-                    //     profile_img.setBackground(new ShapeDrawable(new OvalShape()));
-                    user_img2.setClipToOutline(true);
-
-
-                    ImageLoader.getInstance().displayImage("http://file.paranweb.co.kr/gay/profile_img_small/"+json_user_img3, user_img3,options);
-                    //     profile_img.setBackground(new ShapeDrawable(new OvalShape()));
-                    user_img3.setClipToOutline(true);
-
-
-
-
-
-                } catch (JSONException e) {
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) ;
-
-        stringRequest.setTag("MAIN");
-        queue.add(stringRequest);
-
-
-        user_img1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자
-                        Profile.class); // 다음넘어갈 화면
-                intent.putExtra("user_token", json_user_uk1);
-                getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-            }
-        });
-
-        user_img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자
-                        Profile.class); // 다음넘어갈 화면
-                intent.putExtra("user_token", json_user_uk2);
-                getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-            }
-        });
-
-        user_img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자
-                        Profile.class); // 다음넘어갈 화면
-                intent.putExtra("user_token", json_user_uk3);
-                getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-            }
-        });
-
-
-
-        user_img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        getActivity(), // 현재화면의 제어권자
-                        Profile.class); // 다음넘어갈 화면
-                intent.putExtra("user_token", json_user_uk3);
-                getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-            }
-        });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setHasFixedSize(true);
@@ -404,7 +210,6 @@ public class MemberrankFragment extends Fragment
 
 
 
-
         layout.findViewById(R.id.gototop).setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
@@ -424,12 +229,14 @@ public class MemberrankFragment extends Fragment
                 new Button.OnClickListener() {
                     public void onClick(View v) {
 
-
                         Intent intent = new Intent(
-                                getActivity(), // 현재화면의 제어권자
-                                Profile.class); // 다음넘어갈 화면
-                        intent.putExtra("user_token", "ran");
-                        getActivity().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
+                                getActivity().getBaseContext(), // 현재화면의 제어권자
+                                chat.class); // 다음넘어갈 화면
+
+
+
+
+                        getActivity().getBaseContext().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
 
 
                     }
@@ -440,24 +247,7 @@ public class MemberrankFragment extends Fragment
         return layout;
 
     }
-    public void ref() {
 
-
-        swipeContainer.setRefreshing(true);
-        items.clear();
-        //  recyclerView.removeAllViews();
-        page_int=1;
-        re_view=0;
-
-        new DownloadJSON().execute();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-
-                swipeContainer.setRefreshing(false);
-            }
-        }, 1000);
-    }
 
     // DownloadJSON AsyncTask
     private class DownloadJSON extends AsyncTask<Void, Void, Void> {
@@ -473,12 +263,14 @@ public class MemberrankFragment extends Fragment
             // Create an array
 
             // Retrieve JSON Objects from the given URL address
+            SharedPreferences preferences = getActivity().getSharedPreferences("pref", MODE_PRIVATE);
+            String userkey=preferences.getString("token", "");
 
             jsonobject = JSONfunctions
-                    .getJSONfromURL("http://file.paranweb.co.kr/gay/board_app.php?uk="+userkey+"&p="+ String.valueOf(page_int));
+                    .getJSONfromURL("http://file.paranweb.co.kr/gay/profile_like.php?uk="+userkey+"&p="+ String.valueOf(page_int)+"&ta="+user_token);
 
 
-            Log.d("json_url", "http://file.paranweb.co.kr/gay/board_app.php?uk="+userkey+"&p="+ String.valueOf(page_int));
+            Log.d("json_url", "http://file.paranweb.co.kr/gay/profile_like.php?uk="+userkey+"&p="+ String.valueOf(page_int)+"&ta="+user_token);
             if(jsonobject==null) {
                 return null;
             }
@@ -517,7 +309,7 @@ public class MemberrankFragment extends Fragment
 
                 if(re_view==0) {
 
-                    RecyclerAdapter=new RecyclerAdapter_single(getActivity(), items, R.layout.fragment_first);
+                    RecyclerAdapter=new RecyclerAdapter_profile_like(getActivity(), items, R.layout.fragment_first);
 
                     recyclerView.setAdapter(RecyclerAdapter);
 
@@ -537,11 +329,11 @@ public class MemberrankFragment extends Fragment
                     swipeContainer.setVisibility(View.VISIBLE);
                     coverimg.setVisibility(View.GONE);
 
-                    swipeContainer.setRefreshing(false);
                 }
 
 
             }else {
+
                 coverimg.setImageResource(R.drawable.intro2);
                 Toast.makeText(getActivity(), "인터넷 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
             }
@@ -576,6 +368,6 @@ public class MemberrankFragment extends Fragment
             //    Toast.makeText(this, "어플리케이션이 정상적으로 등록되었습니다.", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 }
+
+

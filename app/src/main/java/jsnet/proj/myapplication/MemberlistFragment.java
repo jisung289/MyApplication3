@@ -446,6 +446,12 @@ public class MemberlistFragment extends Fragment
                     RecyclerAdapter=new RecyclerAdapter_single(getActivity(), items, R.layout.fragment_first);
 
                     recyclerView.setAdapter(RecyclerAdapter);
+
+                    if(jsonarray.length()<1){
+                        coverimg.setImageResource(R.drawable.nosearch);
+                    }
+
+
                     re_view=1;
 
                 }else {
@@ -462,6 +468,7 @@ public class MemberlistFragment extends Fragment
 
 
             }else {
+                coverimg.setImageResource(R.drawable.intro2);
                 Toast.makeText(getActivity(), "인터넷 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
             }
         }

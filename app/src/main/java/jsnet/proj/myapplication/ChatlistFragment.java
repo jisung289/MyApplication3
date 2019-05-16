@@ -99,6 +99,7 @@ public class ChatlistFragment extends Fragment
         coverimg = (ImageView) layout.findViewById(R.id.imageView6);
         setkeybtn = (Button) layout.findViewById(R.id.button4);
 
+        setkeybtn.setVisibility(View.GONE);
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -302,6 +303,9 @@ public class ChatlistFragment extends Fragment
                     RecyclerAdapter=new RecyclerAdapter_chat(getActivity(), items, R.layout.fragment_first);
 
                     recyclerView.setAdapter(RecyclerAdapter);
+                    if(jsonarray.length()<1){
+                        coverimg.setImageResource(R.drawable.nochat);
+                    }
                     re_view=1;
 
                 }else {
@@ -317,6 +321,7 @@ public class ChatlistFragment extends Fragment
 
 
             }else {
+                coverimg.setImageResource(R.drawable.intro2);
                 Toast.makeText(getActivity(), "인터넷 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
             }
         }

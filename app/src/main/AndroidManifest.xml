@@ -55,6 +55,9 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
 
+        <activity android:name=".LoadingActivity">
+
+        </activity>
         <activity android:name=".Profile">
 
         </activity>

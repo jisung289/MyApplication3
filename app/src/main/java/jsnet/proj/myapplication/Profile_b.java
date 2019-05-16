@@ -1,7 +1,6 @@
 package jsnet.proj.myapplication;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -12,47 +11,30 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.FileProvider;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
-
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -86,7 +68,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
-public class Profile extends AppCompatActivity {
+public class Profile_b extends AppCompatActivity {
 
 
     private Intent intent;
@@ -139,7 +121,7 @@ public class Profile extends AppCompatActivity {
     private LinearLayout btn_list;
 
 
-    private int margin;
+
     private ImageView mypro_img;
     private ImageView mypro_text;
     private ImageView mypro_knick;
@@ -149,7 +131,7 @@ public class Profile extends AppCompatActivity {
     private TextView profile_btn_list;
 
 
-    public String user_token;
+    private String user_token;
 
     private RequestQueue queue;
     private ImageView profile_img;
@@ -159,7 +141,7 @@ public class Profile extends AppCompatActivity {
     private String json_user_text;
     private String json_user_carea;
     private String json_user_sex;
-    private ViewPager vp;
+
     ByteArrayOutputStream byteArrayOutputStream ;
     ByteArrayOutputStream byteArrayOutputStreama[] ;
 
@@ -175,7 +157,6 @@ public class Profile extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
 
-    private Context context;
 
     String user_data = "" ;
     String ImageTag = "image_tag" ;
@@ -217,16 +198,16 @@ public class Profile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
-        FragmentStatePagerAdapter pagerAdapter;
+
 
         Intent intent = getIntent(); // 값을 받아온다.
         user_token=(String)intent.getExtras().get("user_token");
 
-        context = getApplicationContext();
+
 
         SharedPreferences preferences = getSharedPreferences("pref", MODE_PRIVATE);
          userkey=preferences.getString("temp_key", "");
-        vp = (ViewPager)findViewById(R.id.vp);
+
 
         profile_name = (TextView) findViewById(R.id.profile_name);
         profile_text = (TextView) findViewById(R.id.profile_text);
@@ -427,6 +408,55 @@ public class Profile extends AppCompatActivity {
             }
         });
 
+        flag_frist=1;
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+
+
+
+        // startActivity(new Intent(getActivity().getBaseContext(), Setkeyword.class));
+        items.clear();
+
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        coverimg = (ImageView) findViewById(R.id.imageView6);
+
+
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                // fetchTimelineAsync(0);
+
+                items.clear();
+                //  recyclerView.removeAllViews();
+                page_int=1;
+                re_view=0;
+
+                new DownloadJSON().execute();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+
+                        swipeContainer.setRefreshing(false);
+                    }
+                }, 1000);
+
+            }
+        });
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+
+
+
 
         queue = Volley.newRequestQueue(this);
         String url = "http://file.paranweb.co.kr/gay/get_profile.php?uk="+userkey+"&at="+user_token;
@@ -503,31 +533,157 @@ public class Profile extends AppCompatActivity {
         stringRequest.setTag(TAG);
         queue.add(stringRequest);
 
-        pagerAdapter=new pagerAdapter(getSupportFragmentManager());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
 
-        vp.setOffscreenPageLimit(2);
-        int dpValue = 20;
-        float d = getResources().getDisplayMetrics().density;
-        margin = (int) (dpValue * d);
-        vp.setPadding(0, 0, margin, 0);
-        vp.setClipToPadding(false);
-        vp.setPageMargin(0);
+        //메모장 백업해놓음
 
 
-        vp.setAdapter(pagerAdapter);
-        vp.setCurrentItem(0);
+        //  recyclerView.setAdapter(new RecyclerAdapter(getApplicationContext(), items, R.layout.activity_main));
 
-        vp.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override //스와이프로 페이지 이동시 호출됨
-            public void onPageSelected(int position) {
-                if(position==0){
-                    vp.setPadding(0, 0, margin, 0);
-                }
-                if(position==1){
-                    vp.setPadding(margin,0, 0,  0);
-                }
+
+
+        page_int=1;
+        re_view=0;
+        //    getData("http://car2.paranweb.co.kr/car.php?p="+String.valueOf(page_int));
+        //    getData("http://car2.paranweb.co.kr/car.php?p="+String.valueOf(page_int));
+
+        //   Item[] item = new Item[1];
+        //    item[0] = new Item( "http://car.paranweb.co.kr/car_img/3151.png", "자동차", "1");
+
+        //   items.add(item[0]);
+
+
+     //   new DownloadJSON().execute();
+
+//호출부분
+
+
+
+
+
+
+
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int current_page) {
+
+                page_int=page_int+1;
+                new DownloadJSON().execute();
             }
         });
+
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+
+                swipeContainer.setRefreshing(false);
+            }
+        }, 1000);
+
+
+
+
+
+        final RecyclerView  scrollView = (RecyclerView) findViewById(R.id.recyclerview);
+
+
+
+        new DownloadJSON().execute();
+
+
+
+
+
+    }
+
+
+    // DownloadJSON AsyncTask
+    private class DownloadJSON extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Create a progressdialog
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            // Create an array
+
+            // Retrieve JSON Objects from the given URL address
+            SharedPreferences preferences = getSharedPreferences("pref", MODE_PRIVATE);
+            String userkey=preferences.getString("temp_key", "");
+
+            jsonobject = JSONfunctions
+                    .getJSONfromURL("http://file.paranweb.co.kr/gay/board_app_profile.php?uk="+userkey+"&at="+user_token+"&p="+ String.valueOf(page_int));
+
+
+            Log.d("json_url", "http://file.paranweb.co.kr/gay/board_app_profile.php?uk="+userkey+"&at="+user_token+"&p="+ String.valueOf(page_int));
+            if(jsonobject==null) {
+                return null;
+            }
+            try {
+                // Locate the array name in JSON
+                jsonarray = jsonobject.getJSONArray("result");
+
+                Item[] item = new Item[jsonarray.length()];
+
+                if(page_int==1) {
+                    items.clear();
+                }
+                Log.d("json_url", String.valueOf(jsonarray.length()));
+                for (int i = 0; i < jsonarray.length(); i++) {
+                    jsonobject = jsonarray.getJSONObject(i);
+                    // Retrive JSON Objects
+
+                    item[i] = new Item(jsonobject.getString("car_img"), jsonobject.getString("car_name"), jsonobject.getString("sno"), jsonobject.getString("p_content"), jsonobject.getString("reg_date"), jsonobject.getString("skin_num"), jsonobject.getString("pro_img"), jsonobject.getString("able_java"), jsonobject.getString("news_code"));
+                    items.add(item[i]);
+                }
+
+            } catch (JSONException e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void args) {
+            if(jsonarray!=null) {
+
+                //  RecyclerAdapter.additem(RecyclerAdapter.getItemCount()-jsonarray.length());
+                // mProgressDialog.dismiss();
+
+
+                if(re_view==0) {
+
+                    RecyclerAdapter=new RecyclerAdapter_profile(getBaseContext(), items, R.layout.fragment_first);
+
+                    recyclerView.setAdapter(RecyclerAdapter);
+                    re_view=1;
+
+                }else {
+
+                    RecyclerAdapter.additem(RecyclerAdapter.getItemCount()-jsonarray.length());
+                }
+
+                if(jsonarray.length()>0) {
+                    swipeContainer.setVisibility(View.VISIBLE);
+                    coverimg.setVisibility(View.GONE);
+
+                }
+
+
+            }else {
+                Toast.makeText(getBaseContext(), "인터넷 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
 
@@ -593,6 +749,12 @@ public class Profile extends AppCompatActivity {
 
 
 
+                        items.clear();
+                        //  recyclerView.removeAllViews();
+                        page_int=1;
+                        re_view=0;
+
+                        new DownloadJSON().execute();
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             public void run() {
@@ -697,7 +859,7 @@ public class Profile extends AppCompatActivity {
     public void GetImageFromGallery(){
 
         GalIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(Intent.createChooser(GalIntent, "사진첩에서 이미지를 가져옵니다."), 2);
 
     }
@@ -705,7 +867,7 @@ public class Profile extends AppCompatActivity {
 
     private void uploadimg(String a){
 
-        progressDialog = ProgressDialog.show(Profile.this,"글을 저장중입니다.","잠시만 기다려주세요",false,false);
+        progressDialog = ProgressDialog.show(Profile_b.this,"글을 저장중입니다.","잠시만 기다려주세요",false,false);
 
         ConvertImage=a;
 
@@ -724,6 +886,15 @@ public class Profile extends AppCompatActivity {
             protected void onPostExecute(String string1) {
 
                 super.onPostExecute(string1);
+
+
+
+                items.clear();
+                //  recyclerView.removeAllViews();
+                page_int=1;
+                re_view=0;
+
+                new DownloadJSON().execute();
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
@@ -747,7 +918,7 @@ public class Profile extends AppCompatActivity {
             @Override
             protected String doInBackground(Void... params) {
 
-                Profile.ImageProcessClass imageProcessClass = new Profile.ImageProcessClass();
+                Profile_b.ImageProcessClass imageProcessClass = new Profile_b.ImageProcessClass();
 
                 HashMap<String, String> HashMapParams = new HashMap<String, String>();
                 HashMapParams.put("sno", userkey);
@@ -845,53 +1016,6 @@ public class Profile extends AppCompatActivity {
             return stringBuilder.toString();
         }
 
-    }
-
-
-
-    private class pagerAdapter extends FragmentStatePagerAdapter
-    {
-        public pagerAdapter(android.support.v4.app.FragmentManager fm)
-        {
-            super(fm);
-        }
-        @Override
-        public android.support.v4.app.Fragment getItem(int position)
-        {
-
-            switch(position)
-            {
-                case 0:
-                    return new Profile_list();
-                case 1:
-                    return new Profile_list_like();
-                default:
-                    return null;
-            }
-        }
-        @Override
-        public int getCount()
-        {
-            return 2;
-        }
-
-        public int getItemPosition(Object object){
-            return POSITION_NONE;
-        }
-        //탭의 제목으로 사용되는 문자열 생성
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
-        }
-
-
-
-    }
-
-    public Fragment findFragmentByPosition_new(int position) {
-        return getSupportFragmentManager().findFragmentByTag(
-                "android:switcher:" + vp.getId() + ":"
-                        + ((FragmentPagerAdapter) vp.getAdapter()).getItemId(position));
     }
 
 }
