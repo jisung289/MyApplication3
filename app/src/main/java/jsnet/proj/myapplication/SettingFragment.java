@@ -95,6 +95,7 @@ public class SettingFragment extends Fragment
     private ViewGroup container;
     private SwipeRefreshLayout swipeContainer;
     private ImageView btn2;
+    private ImageView get_free_point;
 
 
 
@@ -146,6 +147,19 @@ public class SettingFragment extends Fragment
         point_view= (TextView) layout.findViewById(R.id.point_view);
 
 
+        get_free_point = (ImageView) layout.findViewById(R.id.get_free_point);
+
+
+        get_free_point.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(
+                        getActivity().getBaseContext(), // 현재화면의 제어권자
+                        Freepoint.class); // 다음넘어갈 화면
+                getActivity().startActivityForResult(intent,4);
+            }
+        });
 
 
 

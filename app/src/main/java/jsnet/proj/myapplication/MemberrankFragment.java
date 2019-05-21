@@ -285,7 +285,7 @@ public class MemberrankFragment extends Fragment
             }
         }) ;
 
-        stringRequest.setTag("MAIN");
+        stringRequest.setTag("MAIN3");
         queue.add(stringRequest);
 
 

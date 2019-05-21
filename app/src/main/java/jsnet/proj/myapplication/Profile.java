@@ -198,6 +198,7 @@ public class Profile extends AppCompatActivity {
     int img_up_cnt = 0;
     int img_up_i = 0;
 
+    private ImageView get_free_point;
 
     private RecyclerView recyclerView;
 
@@ -285,7 +286,6 @@ public class Profile extends AppCompatActivity {
         mypro_knick = (ImageView) findViewById(R.id.mypro_knick);
         mypro_text = (ImageView) findViewById(R.id.mypro_text);
         mypro_area = (ImageView) findViewById(R.id.mypro_area);
-
         if(user_token.equals(userkey)) {
 
 
@@ -517,6 +517,7 @@ public class Profile extends AppCompatActivity {
 
             }
         });
+
 
 
         queue = Volley.newRequestQueue(this);

@@ -203,7 +203,7 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
         pagerAdapter=new pagerAdapter(getSupportFragmentManager());
 
         title_bar = (TextView) findViewById(R.id.title_tv);
-        vp.setOffscreenPageLimit(3);
+        vp.setOffscreenPageLimit(5);
         //저장되는 최대한의 프래그먼트
 
         vp.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -326,7 +326,7 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
 
 
-       btn_third.setOnClickListener(
+       btn_new.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         //여기에 이벤트를 적어주세요
@@ -484,8 +484,16 @@ public class Mainviewpage extends AppCompatActivity implements ActionBar.TabList
 
             Log.d("json_url_pro", "called");
             vp.setAdapter(pagerAdapter);
-            vp.setCurrentItem(1);
+            vp.setCurrentItem(2);
 
+        }
+
+
+        if (requestCode == 4) {
+
+            Log.d("json_url_pro", "called");
+            vp.setAdapter(pagerAdapter);
+            vp.setCurrentItem(4);
         }
     }
 
