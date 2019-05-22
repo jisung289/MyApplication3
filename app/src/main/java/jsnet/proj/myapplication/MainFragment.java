@@ -243,23 +243,6 @@ public class MainFragment extends Fragment
                 }
         );
 
-        layout.findViewById(R.id.sha).setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
-
-                        Intent intent = new Intent(
-                                getActivity().getBaseContext(), // 현재화면의 제어권자
-                                chat.class); // 다음넘어갈 화면
-
-
-
-
-                        getActivity().getBaseContext().startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK));
-
-
-                    }
-                }
-        );
 
 
         return layout;

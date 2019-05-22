@@ -17,6 +17,7 @@
             android:layout_height="0dp" />
 
         <LinearLayout
+            android:id="@+id/bg_for_sex"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#ffc1b5"
@@ -58,6 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -91,6 +93,7 @@
                         app:srcCompat="@drawable/ic_quill_pen_line" />
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -148,6 +151,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/bg_for_sex2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#db715c"

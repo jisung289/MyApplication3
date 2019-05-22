@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
@@ -202,7 +203,8 @@ public class Profile extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-
+    private LinearLayout bg_for_sex;
+    private LinearLayout bg_for_sex2;
     public static RecyclerView.LayoutManager mLayoutManager;
 
 
@@ -250,6 +252,12 @@ public class Profile extends AppCompatActivity {
 
 
         ImageView back_btn = (ImageView) findViewById(R.id.back_btn);
+         bg_for_sex = (LinearLayout) findViewById(R.id.bg_for_sex);
+        bg_for_sex2 = (LinearLayout) findViewById(R.id.bg_for_sex2);
+
+
+
+
 
 
         back_btn.setOnClickListener(new View.OnClickListener() {
@@ -543,6 +551,14 @@ public class Profile extends AppCompatActivity {
                     jsno_btn_hit = jsonobject.getString("hit");
                     jsno_btn_list = jsonobject.getString("list_cnt");
 
+
+                    if(json_user_sex.equals("m")){
+                        bg_for_sex.setBackgroundColor(Color.parseColor("#b0b9ff"));
+                        bg_for_sex2.setBackgroundColor(Color.parseColor("#8e9bff"));
+                    }else{
+                        bg_for_sex.setBackgroundColor(Color.parseColor("#ffbdbb"));
+                        bg_for_sex.setBackgroundColor(Color.parseColor("#ff928f"));
+                    }
 
                     profile_name.setText(json_user_name);
                     profile_text.setText(json_user_text);

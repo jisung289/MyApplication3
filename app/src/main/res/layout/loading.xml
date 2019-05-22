@@ -38,7 +38,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="top"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="피\n스\n팅"
+            android:text="오\n우\n야"
             android:textAlignment="gravity"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"

@@ -475,10 +475,10 @@ public class MemberrankFragment extends Fragment
             // Retrieve JSON Objects from the given URL address
 
             jsonobject = JSONfunctions
-                    .getJSONfromURL("http://file.paranweb.co.kr/gay/board_app.php?uk="+userkey+"&p="+ String.valueOf(page_int));
+                    .getJSONfromURL("http://file.paranweb.co.kr/gay/get_member_list.php?uk="+userkey+"&p="+ String.valueOf(page_int));
 
 
-            Log.d("json_url", "http://file.paranweb.co.kr/gay/board_app.php?uk="+userkey+"&p="+ String.valueOf(page_int));
+            Log.d("json_url", "http://file.paranweb.co.kr/gay/get_member_list.php?uk="+userkey+"&p="+ String.valueOf(page_int));
             if(jsonobject==null) {
                 return null;
             }

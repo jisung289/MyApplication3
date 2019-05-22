@@ -2,6 +2,7 @@ package jsnet.proj.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.AsyncTask;
@@ -102,9 +103,14 @@ public class RecyclerAdapter_single extends RecyclerView.Adapter<RecyclerAdapter
         holder.title.setText(item.getTitle());
 
         holder.tv_writer.setText(item.getregdate());
-
         holder.tv_content.setText(item.getcontent());
+        holder.last_login.setText(item.getable_java());
 
+        if(item.getskin_num().equals("m")){
+            holder.title.setTextColor(Color.parseColor("#6274ff"));
+        }else{
+            holder.title.setTextColor(Color.parseColor("#ff6762"));
+        }
 
         holder.image2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +152,7 @@ public class RecyclerAdapter_single extends RecyclerView.Adapter<RecyclerAdapter
         TextView title;
         TextView tv_content;
         TextView tv_writer;
+        TextView last_login;
         CardView cardview;
         ProgressBar progressbar;
 
@@ -156,6 +163,7 @@ public class RecyclerAdapter_single extends RecyclerView.Adapter<RecyclerAdapter
             cardview = (CardView) itemView.findViewById(R.id.cardview);
             tv_content = (TextView) itemView.findViewById(R.id.tv_content);
             tv_writer = (TextView) itemView.findViewById(R.id.tv_date);
+            last_login = (TextView) itemView.findViewById(R.id.last_login);
         }
     }
 

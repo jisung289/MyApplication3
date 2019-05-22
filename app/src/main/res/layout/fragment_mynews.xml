@@ -71,16 +71,6 @@
                 android:clickable="true"
                 android:src="@drawable/ic_vertical_align_top_fff_24dp" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/sha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:src="@drawable/ic_textsms_black_24dp" />
         </LinearLayout>
 
     </FrameLayout>
