@@ -227,13 +227,6 @@ public class ChatlistFragment extends Fragment
                 }
         );
 
-        layout.findViewById(R.id.sha).setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
-
-                    }
-                }
-        );
 
 
         return layout;
