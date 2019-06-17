@@ -24,10 +24,6 @@ public class LoadingActivity extends Activity {
 
         initialize();
 
-        LinearLayout view = (LinearLayout) findViewById(R.id.load_view);
-
-        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.loading_anim);
-        view.startAnimation(animation);
     }
 
     private void initialize() {

@@ -1,10 +1,12 @@
 package jsnet.proj.myapplication;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,17 +32,22 @@ import org.json.JSONObject;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class Login extends AppCompatActivity {
+    public static Activity LoginA;
+
     private static final String TAG = "MAIN";
     private TextView tv;
     private EditText etId;
     private EditText etPw;
-    private Button btnSend;
+    private ImageView btnSend;
     private TextView btnReg;
     private RequestQueue queue;
     private  String get_success;
     private  String get_token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LoginA=Login.this;
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         tv = findViewById(R.id.tvMain);
